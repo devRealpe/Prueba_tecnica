@@ -10,9 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UsuarioDTO {
-    private Long idUsuario;
+    private Long id; // Cambio: era "idUsuario", ahora "id" para coincidir con la entidad
 
-    private String nombre;
+    private String name; // Cambio: era "nombre", ahora "name" para que el frontend Angular lo lea
+                         // directamente
 
-    private String correo;
+    private String email; // Cambio: era "correo", ahora "email" para coincidir con la entidad y el
+                          // frontend
 }

@@ -1,29 +1,24 @@
-/**
- * Servicio Angular de ejemplo para consumir endpoints de Spring Boot.
- */
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { UserModel } from './models/UserModel';
 
-export interface User extends UserModel {
-  name: string;
-  email: string;
+// Coincide exactamente con UsuarioDTO del backend (campos: id, name, email)
+export interface User {
+  id?: number;
+  name: string;   // backend: UsuarioDTO.name  (mapeado desde entidad.nombre)
+  email: string;  // backend: UsuarioDTO.email
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackendService {
-  // Ruta base
   private baseUrl = 'http://localhost:8080';
 
   constructor(private http: HttpClient) {}
 
   listItems(): Observable<User[]> {
     return this.http.get<User[]>(`${this.baseUrl}/usuarios`);
-
   }
 
   getItem(id: number): Observable<User> {

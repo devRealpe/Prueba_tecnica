@@ -2,12 +2,13 @@ package com.prueba.umariana.controllers;
 
 import com.prueba.umariana.dto.UsuarioDTO;
 import com.prueba.umariana.services.UsuarioService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
-
-// Voy hacer el crud solo para usuarios, ya no alcanzo teacher
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -16,23 +17,42 @@ import lombok.RequiredArgsConstructor;
 public class UsuariosController {
     private final UsuarioService usuarioService;
 
+    // GET /usuarios → listar todos
     @GetMapping
-    public List<UsuarioDTO> getAllUsuarios() {
-        return usuarioService.getAllUsuarios();
+    public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
+        return ResponseEntity.ok(usuarioService.getAllUsuarios());
     }
 
+    // GET /usuarios/{id} → obtener uno
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioDTO> getUsuarioById(@PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.getUsuarioById(id));
+    }
+
+    // POST /usuarios → crear
     @PostMapping
-    public UsuarioDTO createUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-        return usuarioService.createUsuario(usuarioDTO);
+    public ResponseEntity<UsuarioDTO> createUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+        UsuarioDTO created = usuarioService.createUsuario(usuarioDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    // PUT /usuarios/{id} → actualizar
     @PutMapping("/{id}")
-    public UsuarioDTO updateUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
-        return usuarioService.updateUsuario(id, usuarioDTO);
+    public ResponseEntity<UsuarioDTO> updateUsuario(@PathVariable Long id,
+            @RequestBody UsuarioDTO usuarioDTO) {
+        return ResponseEntity.ok(usuarioService.updateUsuario(id, usuarioDTO));
     }
 
+    // DELETE /usuarios/{id} → eliminar
     @DeleteMapping("/{id}")
-    public void deleteUsuario(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
         usuarioService.deleteUsuario(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Manejador de errores de negocio
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
     }
 }
